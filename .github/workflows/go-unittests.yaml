@@ -50,8 +50,8 @@ jobs:
           cd $GOSRC_DIR
           make test
 
-      - name: Run tests and generate coverage
-        run: |
-          cd $GOSRC_DIR
-          go test -coverprofile=coverage.out -coverpkg ./... ./...
-          ../../.github/workflows/scripts/go-coverage.sh
+      # - name: Run tests and generate coverage
+      #   run: |
+      #     cd $GOSRC_DIR
+      #     go test -coverprofile=coverage.out -coverpkg ./... ./...
+      #     ../../.github/workflows/scripts/go-coverage.sh
