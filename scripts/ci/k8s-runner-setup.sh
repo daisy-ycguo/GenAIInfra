@@ -76,7 +76,8 @@ echo \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update
 # Install docker
-sudo apt-get install -y docker.io
+# sudo apt-get install -y docker.io
+sudo apt-get install -y docker-ce
 # Install docker compose
 sudo apt-get install docker-compose-plugin
 
@@ -86,10 +87,17 @@ docker run -d -p 5000:5000 --restart=always --name registry registry:2
 echo "{\"insecure-registries\": [\"$OPEA_IMAGE_REPO\"]}" | sudo tee /etc/docker/daemon.json
 sudo systemctl restart docker
 # config unsecure image repo in kubernetes
-echo "server = \"http://$OPEA_IMAGE_REPO\"" | sudo tee /etc/containerd/certs.d/$OPEA_IMAGE_REPO/hosts.toml
-echo "[host.\"http://$OPEA_IMAGE_REPO\"]" | sudo tee -a /etc/containerd/certs.d/$OPEA_IMAGE_REPO/hosts.toml
-echo "  capabilities = [\"pull\", \"resolve\", \"push\"]" | sudo tee -a /etc/containerd/certs.d/$OPEA_IMAGE_REPO/hosts.toml
-echo "  skip_verify = true" | sudo tee -a /etc/containerd/certs.d/$OPEA_IMAGE_REPO/hosts.toml
+# echo "server = \"http://$OPEA_IMAGE_REPO\"" | sudo tee /etc/containerd/certs.d/$OPEA_IMAGE_REPO/hosts.toml
+# echo "[host.\"http://$OPEA_IMAGE_REPO\"]" | sudo tee -a /etc/containerd/certs.d/$OPEA_IMAGE_REPO/hosts.toml
+# echo "  capabilities = [\"pull\", \"resolve\", \"push\"]" | sudo tee -a /etc/containerd/certs.d/$OPEA_IMAGE_REPO/hosts.toml
+# echo "  skip_verify = true" | sudo tee -a /etc/containerd/certs.d/$OPEA_IMAGE_REPO/hosts.toml
+# edit /etc/containerd/config.toml
+#    [plugins."io.containerd.grpc.v1.cri".registry]
+#      [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+#        [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+#          endpoint = ["https://registry-1.docker.io"]
+#        [plugins."io.containerd.grpc.v1.cri".registry.mirrors."100.80.243.74:5000"]
+#          endpoint = ["http://100.80.243.74:5000"]
 sudo systemctl restart containerd
 # mkdir
 mkdir -p /home/$userid/charts-mnt
