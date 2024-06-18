@@ -19,6 +19,7 @@ ls /usr/bin/habana-container-runtime
 #visible_devices_all_as_default = false
 #mount_accelerators = false
 # Guess : comment mount_accelerators = false to make sure docker can use Habana
+# Guess : comment both visible_devices_all_as_default and mount_accelerators will make both docker and K8s use Habana
 
 # Edit the containerd configuration file to use the Habana runtime
 # sudo tee /etc/containerd/config.toml <<EOF
@@ -44,6 +45,10 @@ sudo systemctl restart kubelet
 kubectl create -f https://vault.habana.ai/artifactory/docker-k8s-device-plugin/habana-k8s-device-plugin.yaml
 # Verify that the plugin is running
 kubectl get pods -n habana-system
+
+# Docker config
+# {"runtimes": {"habana": {"path": "/usr/bin/habana-container-runtime", "runtimeArgs": []}}, "default-runtime": "habana"}
+# systemctl restart docker
 
 # Create a job that uses the Gaudi device plugin
 # $ cat <<EOF | kubectl apply -f -

@@ -20,8 +20,30 @@ sudo apt-get install -y docker.io
 # Install docker compose
 sudo apt-get install docker-compose-plugin
 
+# create a new config file for registry and save it to /home/sdp/registry-config.yml
+# version: 0.1
+# log:
+#   fields:
+#     service: registry
+# storage:
+#   cache:
+#     blobdescriptor: inmemory
+#   filesystem:
+#     rootdirectory: /var/lib/registry
+#   delete:
+#     enabled: true
+# http:
+#   addr: :5000
+#   headers:
+#     X-Content-Type-Options: [nosniff]
+# health:
+#   storagedriver:
+#     enabled: true
+#     interval: 10s
+#     threshold: 3
+# make a directory for local image registry storage: /home/sdp/local_image_registry
 # start docker registry
-docker run -d -p 5000:5000 --restart=always --name registry registry:2
+docker run -d -p 5000:5000 --restart=always --name registry -v /home/sdp/registry-config.yml:/etc/docker/registry/config.yml -v /home/sdp/local_image_registry:/var/lib/registry registry:2
 # config unsecure docker registry
 echo "{\"insecure-registries\": [\"$OPEA_IMAGE_REPO\"]}" | sudo tee /etc/docker/daemon.json
 sudo systemctl restart docker
