@@ -45,7 +45,11 @@ function usage_print() {
     echo "Usage: $0 images|tags|delete"
     echo "./registry.sh images: List all images in the registry"
     echo "./registry.sh delete <image> <tag>: Delete the tag for the image"
+    echo "./registry.sh names: List all names"
+    echo "./registry.sh tags <image name>: list all tags"
+    echo "./registry.sh help: print usage"
 }
+
 
 if [ $# -eq 0 ]; then
     usage_print
@@ -70,6 +74,7 @@ case "$1" in
         ;;
     *)
         echo "Invalid option"
+        usage_print
         exit 1
         ;;
 esac
