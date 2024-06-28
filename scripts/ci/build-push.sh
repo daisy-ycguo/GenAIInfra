@@ -40,6 +40,16 @@ function build_external() {
   cd ..
 }
 
+# function build_gmc() {
+#   if [ -d "GenAIInfra" ]; then
+#               rm -rf GenAIInfra
+#   fi
+#   git clone https://github.com/opea-project/GenAIInfra.git
+#   cd GenAIInfra/microservices-connector
+#   DOCKER_REGISTRY=$OPEA_IMAGE_REPO/opea make build
+#   DOCKER_REGISTRY=$OPEA_IMAGE_REPO/opea make push
+#   cd ..
+# }
 
 function build_mega() {
   if [ -d "GenAIExamples" ]; then
@@ -77,6 +87,9 @@ case "$1" in
    external)
      build_external
      ;;
+  #  gmc)
+  #    build_gmc
+  #    ;;
    *)
      echo "Unkown method"
      ;;
