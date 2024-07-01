@@ -44,6 +44,9 @@ sudo apt-get install docker-compose-plugin
 # make a directory for local image registry storage: /home/sdp/local_image_registry
 # start docker registry
 docker run -d -p 5000:5000 --restart=always --name registry -v /home/sdp/registry-config.yml:/etc/docker/registry/config.yml -v /home/sdp/local_image_registry:/var/lib/registry registry:2
+#gaudi registry
+#docker run -d -p 5000:5000 --restart=always --name registry -v /home/sdp/workspace/registry.yaml:/etc/docker/registry/config.yml -v //scratch-1/local_image_registry:/var/lib/registry registry:2
+
 # config unsecure docker registry
 echo "{\"insecure-registries\": [\"$OPEA_IMAGE_REPO\"]}" | sudo tee /etc/docker/daemon.json
 sudo systemctl restart docker
