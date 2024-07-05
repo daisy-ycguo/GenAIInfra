@@ -44,3 +44,6 @@ kubectl cluster-info --context kind-mycluster
 # kind get clusters
 # delete cluster
 # kind delete cluster --name mycluster
+
+# In order to prepare K8s env for GMC controller,
+# get .cache/huggingface/ ready with a hub folder and a token file including huggingface token.

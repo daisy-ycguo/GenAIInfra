@@ -8,8 +8,8 @@ function docker_build() {
   name=$1
   dockerfile=$2
   docker build -t $OPEA_IMAGE_REPO/opea/$1:latest -f $2 .
-  docker push $OPEA_IMAGE_REPO/$1:latest
-  docker rmi $OPEA_IMAGE_REPO/$1:latest
+  docker push $OPEA_IMAGE_REPO/opea/$1:latest
+  docker rmi $OPEA_IMAGE_REPO/opea/$1:latest
 }
 function build_compos() {
   if [ -d "GenAIComps" ]; then
