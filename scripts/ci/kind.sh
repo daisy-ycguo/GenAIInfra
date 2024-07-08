@@ -22,23 +22,8 @@ sudo mv ./kind /usr/local/bin/kind
 # $ kind --version
 # kind version 0.23.0
 
-# Kind configuration kind_cluster.yaml
-# kind: Cluster
-# apiVersion: kind.x-k8s.io/v1alpha4
-# nodes:
-#   - role: control-plane
-#     extraMounts:
-#       - hostPath: /home/sdp/models
-#         containerPath: /mnt/models
-# containerdConfigPatches:
-# - |-
-#   [plugins."io.containerd.grpc.v1.cri".registry.mirrors."100.80.243.74:5000"]
-#     endpoint = ["http://100.80.243.74:5000"]
-#   [plugins."io.containerd.grpc.v1.cri".registry.configs."100.80.243.74:5000".tls]
-#     insecure_skip_verify = true
-
 # start a kind cluster
-kind create cluster --name mycluster --config kind_cluster.yaml
+kind create cluster --name mycluster --config config/kind-cluster.yaml
 kubectl cluster-info --context kind-mycluster
 # get clusters
 # kind get clusters
@@ -47,3 +32,38 @@ kubectl cluster-info --context kind-mycluster
 
 # In order to prepare K8s env for GMC controller,
 # get .cache/huggingface/ ready with a hub folder and a token file including huggingface token.
+
+#########Create KIND in Gaudi server###############
+# 
+# Ensure habana-runtime is installed
+# Ensure docker runtime is configured to support habana-runtime 
+# cat /etc/docker/daemon.json
+# {
+#    "default-runtime": "habana",
+#    "runtimes": {
+#       "habana": {
+#             "path": "/usr/bin/habana-container-runtime",
+#             "runtimeArgs": []
+#       }
+#    }
+# }
+# habana-runtime `/etc/habana-container-runtime/config.toml` is configured as:
+# comment mount_accelerators = false
+# uncomment visible_devices_all_as_default = false
+# Restart containerd
+# sudo systemctl restart containerd
+# check docker supports habana
+# docker run -t -i --rm --runtime=habana -e HABANA_VISIBLE_DEVICES=all busybox
+# ls /dev/ac*
+
+# create KIND cluster
+# kind create cluster --name mycluster --config config/kind-cluster-habana.yaml
+# kubectl cluster-info --context kind-mycluster
+# kubectl create -f https://vault.habana.ai/artifactory/docker-k8s-device-plugin/habana-k8s-device-plugin.yaml
+# kubectl get pods -n habana-system
+# Test with habana-job:
+# kubectl apply -f config/test-habana-job.yaml
+# check log
+# kubectl logs habanalabs-gaudi-demo-xxxx
+# delete cluster
+# kind delete cluster --name mycluster
