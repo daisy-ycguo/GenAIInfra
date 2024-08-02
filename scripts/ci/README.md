@@ -14,6 +14,23 @@ Let's suppose `opean/codetrans:latest` has pulling issue.
 ### How to config username and password of local registry?
 
 ```
-# Creating TLS Certs
+# Create a user and password for authentication
+# mkdir -p /opt/docker-registry/auth
+# cd /opt/docker-registry/auth
+# htpasswd -bnB admin password >> htpasswd
+# docker run -d -p 5000:5000 --restart=always --name registry -v /home/sdp/registry.yaml:/etc/docker/registry/config.yml -v /home/sdp/image_storage:/var/lib/registry -v /home/sdp/registry/certs:/certs registry:2
+```
 
+Add below configuration to registry.yaml:
+```
+auth:
+  htpasswd:
+    realm: basic-realm
+    path: /auth/htpasswd
+```
+
+Use docker command to login to registry:
+```
+# docker login -u admin -p password localhost:5000
+Login Succeeded
 ```
