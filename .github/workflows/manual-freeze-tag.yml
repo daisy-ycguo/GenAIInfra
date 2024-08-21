@@ -1,0 +1,63 @@
+# Copyright (C) 2024 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+
+name: Freeze helm release tag in helm charts on manual event
+
+on:
+  workflow_dispatch:
+    inputs:
+      oldappversion:
+        default: "v0.8"
+        description: "Old tag to be replaced"
+        required: true
+        type: string
+      newappversion:
+        default: "v0.9"
+        description: "New tag to replace"
+        required: true
+        type: string
+      oldversion:
+        default: "v0.8"
+        description: "Old tag to be replaced"
+        required: true
+        type: string
+      newversion:
+        default: "v0.9"
+        description: "New tag to replace"
+        required: true
+        type: string
+
+jobs:
+  freeze-tag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "NeuralChatBot"
+          git config --global user.email "grp_neural_chat_bot@intel.com"
+          git remote set-url origin https://NeuralChatBot:"${{ secrets.ACTION_TOKEN }}"@github.com/opea-project/GenAIExamples.git
+
+      - name: Run script
+        env:
+          NEWTAG: ${{ inputs.newappversion }}
+        run: |
+          find helm-charts/ -name '*.yaml' -type f -exec sed -i "s#appVersion: \"${{ inputs.oldappversion }}\"#appVersion: \"${{ inputs.newappversion }}\"#g" {} \;
+          find helm-charts/ -name '*.yaml' -type f -exec sed -i "s#version: ${{ inputs.oldversion }}#version: ${{ inputs.newversion }}#g" {} \;
+          ./helm-charts/update_manifests.sh
+ 
+      - name: Commit changes
+        run: |
+          git add .
+          git commit -s -m "Freeze Helm charts versions"
+          git push
