@@ -67,3 +67,11 @@ kubectl cluster-info --context kind-mycluster
 # kubectl logs habanalabs-gaudi-demo-xxxx
 # delete cluster
 # kind delete cluster --name mycluster
+
+## Restart KIND cluster when disk is full
+# kind delete cluster --name mycluster
+# docker volume prune
+## KIND config refer to ./config/kind-cluster.yaml
+# kind create cluster --name mycluster --config cluster-config.yaml
+# kubectl cluster-info --context kind-mycluster
+
